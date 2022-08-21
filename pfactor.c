@@ -29,8 +29,9 @@ void
 usage(FILE *stream, char *exe_path)
 {
     fprintf(stream,
-            "Usage: %s [-h] [-l PATH] VALUE [VALUE ...]\n"
+            "Usage: %s [-h] [-e] [-l PATH] VALUE [VALUE ...]\n"
             "  -h       Display this help message and exit\n"
+            "  -e       Display repeated factors using exponential notation\n"
             "  -l PATH  Load known primes from the specified file\n",
             exe_path);
 }
@@ -42,11 +43,16 @@ main(int argc, char **argv)
     struct primenum_list *list, *factors;
     primenum_int value;
     struct primenum_entry *factor;
+    bool use_exponents;
 
     list = primenum_list_new(true);
+    use_exponents = false;
 
-    while ((opt = getopt(argc, argv, "hl:")) != -1) {
+    while ((opt = getopt(argc, argv, "hel:")) != -1) {
         switch (opt) {
+            case 'e':
+                use_exponents = true;
+                break;
             case 'l':
                 primenum_load_from_disk(list, optarg);
                 break;
@@ -75,10 +81,36 @@ main(int argc, char **argv)
         }
 
         printf("%"PRIMENUM_FMT":", value);
-        for (factor = factors->head;
-             factor != NULL;
-             factor = factor->next)
-            printf(" %"PRIMENUM_FMT, factor->value);
+        if (use_exponents) {
+            primenum_int last_base;
+            unsigned int exponent;
+
+#define PRINT_EXPONENT(last_base, exponent) \
+        (exponent == 1) \
+        ? printf(" %"PRIMENUM_FMT, last_base) \
+        : printf(" %"PRIMENUM_FMT"^%u", last_base, exponent)
+            last_base = factors->head->value;
+            exponent = 0; /* the first time through the for-loop adds 1 */
+            for (factor = factors->head;
+                 factor != NULL;
+                 factor = factor->next) {
+                if (factor->value == last_base)
+                    exponent++;
+                else {
+                    PRINT_EXPONENT(last_base, exponent);
+                    last_base = factor->value;
+                    exponent = 1;
+                }
+            }
+            /* The for-loop stops before printing the last factor */
+            PRINT_EXPONENT(last_base, exponent);
+#undef PRINT_EXPONENT
+        } else {
+            for (factor = factors->head;
+                 factor != NULL;
+                 factor = factor->next)
+                printf(" %"PRIMENUM_FMT, factor->value);
+        }
         printf("\n");
         primenum_list_free(factors);
     }
