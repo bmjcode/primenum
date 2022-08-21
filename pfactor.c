@@ -75,11 +75,10 @@ main(int argc, char **argv)
         }
 
         printf("%"PRIMENUM_FMT":", value);
-        factor = factors->head;
-        while (factor != NULL) {
+        for (factor = factors->head;
+             factor != NULL;
+             factor = factor->next)
             printf(" %"PRIMENUM_FMT, factor->value);
-            factor = factor->next;
-        }
         printf("\n");
         primenum_list_free(factors);
     }
