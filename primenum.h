@@ -146,8 +146,8 @@ struct primenum_list *primenum_factors(struct primenum_list *list,
 /* Load previously found primes from disk */
 /* The file format is an ordered sequence of raw primenum_int values.
  * This can be a convenient time saver, but beware there is no guarantee
- * the data is valid, since testing it would be equivalent to regenerating
- * it from scratch. Use this at your own peril. */
+ * the data is valid, since testing it would require the same effort as
+ * regenerating it from scratch. Use this at your own peril. */
 void primenum_load_from_disk(struct primenum_list *list,
                              const char *path);
 
