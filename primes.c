@@ -158,7 +158,7 @@ main(int argc, char **argv)
     switch (status) {
         case PRIMENUM_OVERFLOW:
             fprintf(stderr, "Maximum value reached\n");
-            status = PRIMENUM_OK; /* we've done all we can, so return success */
+            status = PRIMENUM_OK; /* we've successfully done all we can */
             break;
         case PRIMENUM_MEM_FULL:
             fprintf(stderr, "Out of memory\n");
