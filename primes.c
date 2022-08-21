@@ -49,14 +49,14 @@ log_start(struct primenum_list *list, const char *path)
 
     if (list != NULL) {
         /* Log existing entries in the list */
-        curr = list->head;
-        while (curr != NULL) {
+        for (curr = list->head;
+             curr != NULL;
+             curr = curr->next) {
             if (log_write(curr->value, log) != PRIMENUM_OK) {
                 log_close(log);
                 log = NULL;
                 break;
             }
-            curr = curr->next;
         }
     }
     return log;
