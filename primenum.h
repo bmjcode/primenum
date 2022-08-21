@@ -113,11 +113,17 @@ struct primenum_entry *primenum_list_add(struct primenum_list *list,
 void primenum_list_free(struct primenum_list *list);
 
 /* Return whether a given value is prime */
+/* Because this is implemented using trial division against previously
+ * identified primes, the list must contain primes up to at least
+ * floor(sqrt(value)) or this function will return invalid results. */
 bool primenum_test_inner(struct primenum_list *list,
                          primenum_int value);
 
 /* Run the above test, and if the value is prime, add it to our list */
-/* This returns one of the status codes enumerated above. */
+/* This returns one of the status codes enumerated above.
+ * Because this is implemented using trial division against previously
+ * identified primes, the list must contain primes up to at least
+ * floor(sqrt(value)) or this function will return invalid results. */
 int primenum_test(struct primenum_list *list,
                   primenum_int value,
                   primenum_found_cb found_cb,
